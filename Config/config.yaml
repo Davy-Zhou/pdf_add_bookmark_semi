@@ -1,0 +1,69 @@
+editor_path: '\Notepad3\Notepad3.exe' #用于后续手工修正的编辑器路径，推荐Notepad3;使用其它编辑器，务必填绝对路径，单引号不能少
+
+enable_editor: true #初步格式化书签后是否启用编辑器手工修正
+
+first_letter_lower: false #是否首字母小写
+
+#以下均为书签格式化规则，共分4组规则（层级、样式、杂项、自定义4组），
+#如果需要自定义规则，需要填入最后一组规则中
+#每个规则，有4个选项要填：一、是是否启用规则（loaded）;二、规则名字（name）;三、用于查找的正则表达式（regex_search）;四、用于替换的正则表达式（regex_repalce）
+
+rules:
+- rule: #划分四级书签层级
+  - loaded: true
+    name: first_level
+    regex_search: '^\s*(第)\s*([\d一二三四五六七八九十]+)\s*(章)\s*'
+    regex_repalce: '\1\2\3 '
+  - loaded: true
+    name: fourth_level
+    regex_search: '^\s*(\d+\.\d+\.\d+.\d+)\s*'
+    regex_repalce: '\t\t\t\1 '
+  - loaded: true
+    name: third_level
+    regex_search: '^\s*(\d+\.\d+\.\d+)\s*([^\.\d])'
+    regex_repalce: '\t\t\1 \2'
+  - loaded: true
+    name: second_level
+    regex_search: '^\s*(\d+\.\d+)\s*([^\.\d])'
+    regex_repalce: '\t\1 \2'
+  - loaded: true
+    name: default_level
+    regex_search: '^([^第\s\d一二三四五六七八九十])'
+    regex_repalce: '\t\1'
+  type: bookmark_level
+- rule: #书签样式格式化,额,在划分书签层级的时候已经把样式一起格式化了
+  - loaded: 
+    name: 
+    regex_search: 
+    regex_repalce: 
+  type: bookmark_style_formatting
+- rule: #页偏移，是变量，就不引入yaml配置
+  - loaded: true
+    name: page_number
+    regex_search: '(\s*[\.·…•]*)*(\d+)\s*$'
+    regex_repalce: '\t\2'
+  type: page_offset
+- rule: #杂项
+  - loaded: true  #是否启用该规则
+    name: del_empty_lines  #规则名字，这里指删除空行的规则
+    regex_search: '^$\r?\n'  #正则表达式，用于匹配空行
+    regex_repalce: ''  #用于删除空行
+  type: misc
+- rule: #自定义规则
+  - loaded: 
+    name: 
+    regex_search: 
+    regex_repalce: 
+  - loaded: 
+    name: 
+    regex_search: 
+    regex_repalce: 
+  - loaded: 
+    name: 
+    regex_search: 
+    regex_repalce: 
+  - loaded: 
+    name: 
+    regex_search: 
+    regex_repalce: 
+  type: custom
