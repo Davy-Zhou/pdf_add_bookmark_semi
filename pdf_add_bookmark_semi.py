@@ -3,48 +3,56 @@ import format_bookmark as fbk
 from pikepdf import Pdf, OutlineItem
 from colorama import init 
 import os
+from yaml import safe_load
 
 def pike_add_bookmark():
+    config_path=sys.argv[0]
     txt_filename=sys.argv[1]
     pdf_name = str(txt_filename).split('.txt')[0]+"."+"pdf"
     filename=str(txt_filename).split('\\')[-1]
     path_name=str(txt_filename).split(filename)[0]
     bookmark_filename = path_name+filename.replace(' ', '').split(
         '.txt')[0]+r"(Bookmark)"+"."+filename.replace(' ', '').split('.')[-1]
-
-    with Pdf.open(pdf_name,allow_overwriting_input=True) as pdf:
-        with pdf.open_outline() as outline:
-            with open(bookmark_filename, 'r', encoding='utf-8-sig') as fb:
-                for line in fb.readlines():          
-                    txt_line = line.split('\t')
-                    offset=''
-                    if len(txt_line)>1:
-                        offset = ((int(txt_line[-2]) + int(txt_line[-1]))
-                                if txt_line[-2].isdigit() else  int(txt_line[-1]))-1
-                    # 一级书签
-                    # Page counts are zero-based
-                    if txt_line[0] != '':
-                        L1_item = OutlineItem(txt_line[0], offset)
-                        outline.root.append(L1_item)
-                    # 二级书签
-                    elif txt_line[1] != '':
-                        L2_item = OutlineItem(txt_line[1], offset)
-                        L1_item.children.append(L2_item)
-                    # 三级书签
-                    elif txt_line[2] != '':
-                        L3_item = OutlineItem(txt_line[2], offset)
-                        L2_item.children.append(L3_item)
-#                    四级书签
-                    elif txt_line[3] != '':
-                        L4_item = OutlineItem(txt_line[3], offset)
-                        L3_item.children.append(L4_item)
-        pdf.save(pdf_name)
+    with open(config_path+'\\Config\\config.yaml','r',encoding='utf-8') as f:
+        config=safe_load(f)
+        with Pdf.open(pdf_name,allow_overwriting_input=True) as pdf:
+            with pdf.open_outline() as outline:
+                # 是否清空原PDF书签
+                if config['options']['bookmark_options']['clear_origin_bookmark']:
+                    outline.root.clear()
+                    # 记得改先前config[]
+                with open(bookmark_filename, 'r', encoding='utf-8-sig') as fb:
+                    for line in fb.readlines():          
+                        txt_line = line.split('\t')
+                        offset=''
+#                        判断页偏移是否存在
+                        if len(txt_line)>1 and txt_line[-1].strip().strip('+').isdigit():
+                            offset = ((int(txt_line[-2]) + int(txt_line[-1]))
+                                    if txt_line[-2].isdigit() else  int(txt_line[-1]))-1
+                        # 一级书签
+                        # Page counts are zero-based
+                        if txt_line[0] != '':
+                            L1_item = OutlineItem(txt_line[0], offset)
+                            outline.root.append(L1_item)
+                        # 二级书签
+                        elif txt_line[1] != '':
+                            L2_item = OutlineItem(txt_line[1], offset)
+                            L1_item.children.append(L2_item)
+                        # 三级书签
+                        elif txt_line[2] != '':
+                            L3_item = OutlineItem(txt_line[2], offset)
+                            L2_item.children.append(L3_item)
+#                        四级书签
+                        elif txt_line[3] != '':
+                            L4_item = OutlineItem(txt_line[3], offset)
+                            L3_item.children.append(L4_item)
+            pdf.save(pdf_name)
 
 if __name__ == "__main__":
 #    方便双击使用
     init()
     if len(sys.argv)==1:
-        print("\n请按格式输入：  \033[0;32;40m书签内容文件名 正文页偏移 目录页码(参数可选)\033[0m\n")
+        print("\n请按格式输入：  \033[0;32;40m书签内容文件名(务必加双引号) 正文页偏移 目录页码(参数可选)\033[0m\n")
         print("使用示例:  \033[0;32;40m\"C语言大学实用教程第4版.txt\" 10 7 \033[0m\n\n")
         params =input("请输入： ").split('\"')
 #        print(params,'\n')

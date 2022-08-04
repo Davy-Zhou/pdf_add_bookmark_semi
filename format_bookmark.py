@@ -47,19 +47,20 @@ def format_bookmark():
                     '.txt')[0]+r"(Bookmark)"+"."+filename.replace(' ', '').split('.')[-1]
                 with open(add_bookmark_filename, 'w+', encoding='utf-8-sig') as fw:
                     if len(sys.argv) == 4:
-                        if config['first_letter_lower']:
+                        if config['options']['bookmark_options']['first_letter_lower']:
                             fw.write('目录\t'+str(directory_number)+'\n'+str_list.lower())
                         else:
                             fw.write('目录\t'+str(directory_number)+'\n'+str_list)
                     elif len(sys.argv)==3:
-                        if config['first_letter_lower']:
+                        if config['options']['bookmark_options']['first_letter_lower']:
                             fw.write(str_list.lower())
                         else:
                             fw.write(str_list)
 #               初次格式化完书签，再次使用Notepad3编辑修正
                 print("\n书签部分格式化完成，请在打开的编辑器修正书签文件，并\033[0;31;40m修正完后关闭编辑器！\033[0m\n")
-                if config['enable_editor']:
-                    editor_path=(config['editor_path'] if ':'  in config['editor_path'] else config_path+config['editor_path'])
+                if config['options']['global_options']['enable_editor']:
+                    editor_path=(config['options']['global_options']['editor_path'] if ':'  in config['options']['global_options']['editor_path'] else config_path+config['options']['global_options']['editor_path'])
+                    # print(editor_path,'\n')
                     subprocess.run([editor_path,add_bookmark_filename])
 
 if __name__ == "__main__":

@@ -1,8 +1,21 @@
-editor_path: '\Notepad3\Notepad3.exe' #用于后续手工修正的编辑器路径，推荐Notepad3;使用其它编辑器，务必填绝对路径，单引号不能少
+version: 0.1
 
-enable_editor: true #初步格式化书签后是否启用编辑器手工修正
+# 配置选项，全局配置和书签相关配置，true为开启选项，false 为关闭选项
+options:
+  global_options:
+    #用于后续手工修正的编辑器路径，推荐Notepad3;使用其它编辑器，务必填绝对路径，单引号不能少
+    editor_path: '\Notepad3\Notepad3.exe' 
+    #初步格式化书签后是否启用编辑器手工修正,默认启用
+    enable_editor: true 
+  bookmark_options: 
+    #是否首字母小写
+    first_letter_lower: false 
+    # 加新书签时，是否清空pdf原书签，默认(true)清空
+    clear_origin_bookmark: true
 
-first_letter_lower: false #是否首字母小写
+
+
+
 
 #以下均为书签格式化规则，共分4组规则（层级、样式、杂项、自定义4组），
 #如果需要自定义规则，需要填入最后一组规则中
