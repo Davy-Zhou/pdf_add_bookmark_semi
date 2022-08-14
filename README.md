@@ -8,11 +8,19 @@
 
 `Bug或新功能，最好在Github里的issue里面提,要提新功能代码，欢迎提PR,其它平台不一定能及时看到，github 有邮件通知`:handshake:
 
+- [ ] **2022-8-14** 
+  - [x] **完成书签获取自动化**
+  - [x] **可自动识别部分PDF页偏移**
+  - [x] **改用新打包方式，exe体积更小，速度更快**
+
+
+
 - [ ] **2022-8-1**
   
   - [x] **加书签时，增加清空原有书签选项**
   - [ ] **检测页码合法性，是否超出pdf页数**
   - [ ] **相关容错改进**
+  
 - [ ] **2022-8-3**
 
   - [ ] **bug 参数解析依赖** 
@@ -20,9 +28,85 @@
     ![image-20220803170309034](README.assets/image-20220803170309034.png)
 
   - [ ] 
+  
 - [ ] **2022-8-4**
 
   - [ ] **所有判断做充分性测试**
+
+    ```markdown
+    ```
+
+    
+
+- [ ] **2022-8-9 着重新功能，性能优化，非严重容错问题暂时不修** 
+
+  - [ ] **自动化获取书签**
+
+    ```markdown
+    # PyAutoGui or pywin 模拟点击
+    
+    # 读秀WEB JS逆向书签接口
+    
+    # 书签获取软件逆向接口
+    
+    ```
+
+    
+
+  - [ ] **加书签性能优化**
+
+    ````markdown
+    # 尝试extend()方法
+    2022年8月9日02:15:59
+    
+    1. 
+    ```python
+    
+    outline.root.extend([
+     # Page counts are zero-based
+     OutlineItem('Section One', 0),
+     OutlineItem('Section Two', 2),
+     OutlineItem('Section Three', 8)
+     ])
+    
+    
+    main_item = OutlineItem('Main', 0)
+    outline.root.append(main_item)
+    main_item.children.append(OutlineItem('A', 1))
+    
+    # 还落是明天弄了，想睡觉了
+    2022年8月10日02:28:55
+    # 这个耗时不算太多，先弄书签获取 MuPDF已完成 D:\ABC数学建模\学习\mupdf_add_bookmark.py
+    
+    ```
+    
+    # PyPDF2竟然更新了，试一下，额，WPS PDF差1的问题还是存在
+    
+    
+    # 使用Mupdf，及其它PDF操作Python库
+    
+    
+    # C pdf lib
+    
+    ````
+
+    
+
+    ![image-20220809031157706](README.assets/image-20220809031157706.png)
+
+    
+
+  - [ ] **打包exe优化**
+
+    ```markdown
+    # niutika
+    
+    # 
+    
+    # 
+    ```
+
+    
 
 - [ ] 
 
