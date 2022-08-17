@@ -9,7 +9,7 @@ from chardet import detect
 import subprocess
 import re
 from warnings import simplefilter
-
+from traceback import print_exc
 
 
 def auto_fetch_bookmark(file_name,ssid):
@@ -149,28 +149,34 @@ def pike_add_bookmark():
                             L1_item = OutlineItem(txt_line[0], offset)
                             outline.root.append(L1_item)
                         # 二级书签
-                        elif txt_line[1] != '':
+                        # TODO 书签层级不连续
+                        elif 'L1_item' in locals() and txt_line[1] != '':
                             L2_item = OutlineItem(txt_line[1], offset)
                             L1_item.children.append(L2_item)
                         # 三级书签
-                        elif txt_line[2] != '':
+                        elif 'L2_item' in locals() and txt_line[2] != '':
                             L3_item = OutlineItem(txt_line[2], offset)
                             L2_item.children.append(L3_item)
 #                        四级书签
-                        elif txt_line[3] != '':
+                        elif 'L3_item' in locals() and txt_line[3] != '':
                             L4_item = OutlineItem(txt_line[3], offset)
                             L3_item.children.append(L4_item)
+                        else:
+                            print("\n\033[0;31;40m该书签和上级书签层级不连续，麻烦手动调整:\033[0m"+"\033[0;32;40m"+line+"\033[0m\n")
+                            print("\033[0;32;40m按Enter键退出！\033[0m\n")
+                            input()
+                            sys.exit()
             pdf.save(pdf_name)
 
 
 def main():
     init()
     simplefilter('ignore', category=UserWarning)
-    os.system("title " + "pdf_add_bookmark_semi@DavyZhou")
+    os.system("title " + "pdf_add_bookmark_semi@DavyZhou v0.52")
     print("代码更新请访问："+"\033[0;32;40m https://github.com/Davy-Zhou/pdf_add_bookmark_semi \033[0m"+"\n")
     if len(sys.argv)==1:
         # 这段代码方便双击使用
-        print("新增自动化获取书签和识别PDF页偏移功能，直接拖入需要加书签的pdf即可,pdf文件名务必加ssid号还有双引号\n")
+        print("新增自动化获取书签和识别PDF页偏移功能，\033[0;32;40m直接拖入需要加书签的pdf即可,pdf文件名务必加ssid号还有双引号\033[0m\n")
         print("使用示例:  \033[0;32;40m\"C语言大学实用教程第4版_14133899.pdf\" \033[0m\n")
         print("无法自动获取书签请按以下格式输入：  \033[0;32;40m书签txt文件名(务必加双引号) 正文页偏移 目录页码(参数可选)\033[0m\n")
         print("使用示例:  \033[0;32;40m\"C语言大学实用教程第4版.txt\" 10 7 \033[0m\n")
@@ -241,4 +247,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print('\n')
+        print_exc()
+        print("\n\033[0;32;40m程序运行有问题，记录出错信息，按enter键退出\033[0m\n")
+        input()
