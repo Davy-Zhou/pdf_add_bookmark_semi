@@ -1,0 +1,7 @@
+chardet
+colorama
+pikepdf
+pywinauto
+PyYAML
+pywin32==228
+
