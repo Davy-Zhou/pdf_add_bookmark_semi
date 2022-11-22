@@ -1,5 +1,6 @@
 import sys
 from pikepdf import Pdf, OutlineItem
+from pikepdf import open as pkopen
 from colorama import init 
 import os
 from yaml import safe_load
@@ -11,10 +12,13 @@ import re
 from warnings import simplefilter
 from traceback import print_exc
 
+# 错误提示
+# def errors_hint():
+    # TODO: this
 
 def auto_fetch_bookmark(file_name,ssid):
     #ok TODO file_name解析
-    path = "书签获取小工具2015.05.05【晴天软件】.exe"
+    path = sys.argv[0]+ "\\书签获取小工具2015.05.05【晴天软件】.exe"
     app = Application(backend='win32').start(path)
     # 连接软件的主窗口
     dlg_spec = app.window(title_re='书签获取小工具2015.05.05  【晴天软件】*', class_name_re='WTWindow*')
@@ -29,7 +33,7 @@ def auto_fetch_bookmark(file_name,ssid):
         print("\n没有查询到此SS的书签,请手动获取书签\n")
         print("\033[0;32;40m按Enter键退出！\033[0m\n")
         input()
-        sys.exit()
+        # sys.exit()
 
     sleep(1)
     # 获取文本框数据
@@ -125,8 +129,7 @@ def pike_add_bookmark():
     pdf_name = str(txt_filename).split('.txt')[0]+"."+"pdf"
     filename=str(txt_filename).split('\\')[-1]
     path_name=str(txt_filename).split(filename)[0]
-    bookmark_filename = path_name+filename.replace(' ', '').split(
-        '.txt')[0]+r"(Bookmark)"+"."+filename.replace(' ', '').split('.')[-1]
+    bookmark_filename = path_name+filename.replace(' ', '').split('.txt')[0]+r"(Bookmark)"+"."+filename.replace(' ', '').split('.')[-1]
     with open(config_path+'\\Config\\config.yaml','r',encoding='utf-8') as f:
         config=safe_load(f)
         with Pdf.open(pdf_name,allow_overwriting_input=True) as pdf:
@@ -140,9 +143,16 @@ def pike_add_bookmark():
                         txt_line = line.split('\t')
                         offset=''
 #                        判断页偏移是否存在
-                        if len(txt_line)>1 and txt_line[-1].strip().strip('+').isdigit():
-                            offset = ((int(txt_line[-2]) + int(txt_line[-1]))
-                                    if txt_line[-2].isdigit() else  int(txt_line[-1]))-1
+                        if len(txt_line)>1 and txt_line[-1].strip().strip('+').strip('-').isdigit():
+                            offset = ((int(txt_line[-2]) + int(txt_line[-1].strip().strip('+')))
+                                    if txt_line[-2].isdigit() else  int(txt_line[-1].strip().strip('+')))-1
+                        # 校验offset是否超过pdf页数
+                        if offset!= '' and (offset >= len(pdf.pages) or offset < 0):
+                            print("\n\033[0;31;40m该书签页码超限,pdf共 "+str(len(pdf.pages))+" 页，书签对应页码 "+str(offset+1)+" ,麻烦手动调整或删除:\033[0m"+"\n\n\033[0;32;40m"+line+"\033[0m\n")
+                            print("\033[0;32;40m按Enter键退出！\033[0m\n")
+                            input()
+                            # sys.exit()
+
                         # 一级书签
                         # Page counts are zero-based
                         if txt_line[0] != '':
@@ -165,14 +175,14 @@ def pike_add_bookmark():
                             print("\n\033[0;31;40m该书签和上级书签层级不连续，麻烦手动调整:\033[0m"+"\033[0;32;40m"+line+"\033[0m\n")
                             print("\033[0;32;40m按Enter键退出！\033[0m\n")
                             input()
-                            sys.exit()
+                            # sys.exit()
             pdf.save(pdf_name)
 
 
 def main():
     init()
     simplefilter('ignore', category=UserWarning)
-    os.system("title " + "pdf_add_bookmark_semi@DavyZhou v0.52")
+    os.system("title " + "pdf_add_bookmark_semi@DavyZhou v0.60")
     print("代码更新请访问："+"\033[0;32;40m https://github.com/Davy-Zhou/pdf_add_bookmark_semi \033[0m"+"\n")
     if len(sys.argv)==1:
         # 这段代码方便双击使用
@@ -182,9 +192,10 @@ def main():
         print("使用示例:  \033[0;32;40m\"C语言大学实用教程第4版.txt\" 10 7 \033[0m\n")
         params =input("请输入： ").split('\"')
         # 拿到代码文件路径，得配置文件绝对路径
-        py_dirname, py_name = os.path.split(os.path.abspath(sys.argv[0]))
-        sys.argv.clear()
-        sys.argv.extend([py_dirname])
+        if not os.path.isdir(sys.argv[0]):
+            py_dirname, py_name = os.path.split(os.path.abspath(sys.argv[0]))
+            sys.argv.clear()
+            sys.argv.extend([py_dirname])
         # 判断是否自动获取书签
         if params[1].lower().endswith('pdf',len(params[1])-3,len(params[1])):
             sys.argv.extend([params[1]])
@@ -196,7 +207,7 @@ def main():
             print("\033[0;31;40m 拖入文件必须是txt或pdf文件 \033[0m\n\n")
             print("\033[0;32;40m按Enter键退出！\033[0m\n")
             input()
-            sys.exit()
+            # sys.exit()
 
     else:
         # 适配命令行模式
@@ -206,7 +217,7 @@ def main():
 
     if len(sys.argv)<3 and sys.argv[1].lower().endswith('txt',len(sys.argv[1])-3,len(sys.argv[1])) :
        print("\n错误：参数不足\n使用示例:  \"C语言大学实用教程第4版.txt\" 17 12\n或者:  \"C语言大学实用教程第4版.txt\" 17\n")
-       sys.exit()
+       # sys.exit()
 
     # 解析ssid
     if sys.argv[1].lower().endswith('pdf',len(sys.argv[1])-3,len(sys.argv[1])):
@@ -214,20 +225,23 @@ def main():
         bookmark_filename=str(sys.argv[1]).replace('pdf','txt')
         ssid=re.findall('\d{8}',str(sys.argv[1]).split('\\')[-1])
         if ssid==[]:
-            print("\n 无法识别SSID,请手动添加SSID到pdf文件名上面\n")
+            print("\n无法识别SSID,请手动添加SSID到pdf文件名上面\n")
             print("\033[0;32;40m按Enter键退出！\033[0m\n")
             input()
-            sys.exit()
+            # sys.exit()
         dlg_spec=auto_fetch_bookmark(bookmark_filename,ssid[0])
         dlg_spec.close()
         sleep(1)
         with Pdf.open(str(sys.argv[1]),allow_overwriting_input=True) as pdf:
             content_page, page_offset=recognize_page_offset(pdf)
             if page_offset==None or page_offset==0:
-                print("\n 无法识别页偏移,请使用第二种模式手动计算页偏移加书签\n")
-                print("\033[0;32;40m按Enter键退出！\033[0m\n")
-                input()
-                sys.exit()
+                print("\n无法识别页偏移,请使用第二种模式手动计算页偏移加书签\n")
+#                TODO 不能识别页偏移，再次输入
+                print("\033[0;32;40m请输入页偏移与目录页码： \033[0m\n\n")
+                tmp_page=input('页偏移与目录页码: ').split(' ')
+                page_offset,content_page=tmp_page[0],tmp_page[1]
+#                input()
+                # sys.exit()
             sys.argv.append(page_offset)
             if content_page!=None:
                 sys.argv.append(content_page)
@@ -239,18 +253,27 @@ def main():
         print("\n仅完成书签部分格式化！\n")
         print("\033[0;32;40m按Enter键退出！\033[0m\n")
         input()
-        sys.exit()
-    pike_add_bookmark()
-    print("\n\033[0;32;40m"+pdf_filename+"\033[0m 加书签完成！\n\n")
-    print("\033[0;32;40m按Enter键退出！\033[0m\n")
-    input()
+        # sys.exit()
+    else:
+        pike_add_bookmark()
+        print("\n\033[0;32;40m"+pdf_filename+"\033[0m 加书签完成！\n\n")
+        print("\033[0;32;40m按Enter键退出！\033[0m\n")
+        input()
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print('\n')
-        print_exc()
-        print("\n\033[0;32;40m程序运行有问题，记录出错信息，按enter键退出\033[0m\n")
-        input()
+    i=0
+    while True:
+        try:
+            file_path=sys.argv[0]
+            sys.argv.clear()
+            sys.argv.append(file_path)
+            main()
+        except Exception as e:
+            print('\n')
+            print_exc()
+            print("\n\033[0;32;40m程序运行有问题，记录出错信息，按enter键退出\033[0m\n")
+            input()
+        i=i+1
+        print("\033[0;31;40m重开 + "+str(i)+"\033[0m\n")
+

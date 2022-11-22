@@ -4,9 +4,27 @@
 
 ![PDF直接加书签](https://s6.jpg.cm/2022/08/19/P6fFXi.gif)
 
+**下载链接**：https://github.com/Davy-Zhou/pdf_add_bookmark_semi/releases/download/v0.60/pdf_add_bookmark_semi.v0.60.zip
+
 ## 零、功能更新&Bug修复
 
 `Bug或新功能，最好在Github里的issue里面提,要提新功能代码，欢迎提PR,其它平台不一定能及时看到，github 有邮件通知`:handshake:
+
+
+
+- [x] **2022-11-22**
+
+  - [x] 针对页偏移无法识别时，**增加页偏移输入选项**，无需重开程序
+
+    ![](https://imgse.com/i/z1ovVg)
+
+  - [x] 针对**多个PDF要加书签**情况，完成一个PDF加书签后，无需重开，回车即可给下一个PDF加书签
+
+    ![image-20221122005132356](https://imgse.com/i/z1oxaQ)
+
+  - [x] **书签格式化库规则更新**
+
+    ![image-20221122005253065](https://imgse.com/i/z1oz5j)
 
 
 
@@ -420,11 +438,7 @@ python pdf_add_bookmark_semi.py "C:\Users\acer\Desktop\Notes\安全\Blog\test\�
 
 ### 2.4 下载链接
 
-==52pojie==:  https://www.52pojie.cn/thread-1669076-1-1.html
-
-博客园：https://www.cnblogs.com/inuniverses/p/16535939.html
-
-Github：https://github.com/Davy-Zhou/pdf_add_bookmark_semi
+Github：https://github.com/Davy-Zhou/pdf_add_bookmark_semi/releases
 
 ## 三、代码实现
 
