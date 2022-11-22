@@ -16,15 +16,15 @@
 
   - [x] 针对页偏移无法识别时，**增加页偏移输入选项**，无需重开程序
 
-    ![](https://imgse.com/i/z1ovVg)
+    ![](https://s1.ax1x.com/2022/11/22/z1ovVg.png)
 
   - [x] 针对**多个PDF要加书签**情况，完成一个PDF加书签后，无需重开，回车即可给下一个PDF加书签
 
-    ![image-20221122005132356](https://imgse.com/i/z1oxaQ)
+    ![image-20221122005132356](https://s1.ax1x.com/2022/11/22/z1oxaQ.png)
 
   - [x] **书签格式化库规则更新**
 
-    ![image-20221122005253065](https://imgse.com/i/z1oz5j)
+    ![image-20221122005253065](https://s1.ax1x.com/2022/11/22/z1oz5j.png)
 
 
 
