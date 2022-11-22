@@ -1,4 +1,11 @@
-version: 0.1
+version: 0.18
+
+#更新：
+# 2022年9月15日 替换中文点（replace_chinese_dot）v0.13
+# 2022年10月4日 页偏移新增替换中文点（page_offset）v0.15
+# 2022年10月14日 多个空格替换成单个空格(remove_redundant_space) v0.16
+# 2022年10月21日 参考文献|附录一级书签|附录三、三级书签(references、chinese_third_level) v0.17
+# 2022年11月22日 移除默认书签前面的空格 v0.18
 
 # 配置选项，全局配置和书签相关配置，true为开启选项，false 为关闭选项
 options:
@@ -21,30 +28,38 @@ options:
 #如果需要自定义规则，需要填入最后一组规则中
 #每个规则，有4个选项要填：一、是是否启用规则（loaded）;二、规则名字（name）;三、用于查找的正则表达式（regex_search）;四、用于替换的正则表达式（regex_repalce）
 
+#务必注意正则规则在配置中的顺序很重要!!!
+
+#本配置参考yaml配置：https://raw.githubusercontent.com/gh0stkey/HaE/gh-pages/Config.yml
+
 rules:
 - rule: #划分四级书签层级
+  - loaded: true
+    name: replace_chinese_dot #2022年9月15日 替换中文点
+    regex_search: '．'
+    regex_repalce: '.'
   - loaded: true
     name: first_level
     regex_search: '^\s*(第)\s*([\d一二三四五六七八九十]+)\s*(章)\s*'
     regex_repalce: '\1\2\3 '
   - loaded: true
     name: fourth_level
-    regex_search: '^\s*(\d+\.\d+\.\d+.\d+)\s*'
+    regex_search: '^\s*(\d+(?:[\.]\d+){3})\s*'
     regex_repalce: '\t\t\t\1 '
   - loaded: true
-    name: third_level
-    regex_search: '^\s*(\d+\.\d+\.\d+)\s*([^\.\d])'
+    name: third_level #考虑到附录三级书签
+    regex_search: '^\s*([\da-zA-Z]+(?:[\.]\d+){2})\s*([^\.\d])'
     regex_repalce: '\t\t\1 \2'
   - loaded: true
-    name: second_level
-    regex_search: '^\s*(\d+\.\d+)\s*([^\.\d])'
+    name: second_level #考虑到附录二级书签
+    regex_search: '^\s*([\da-zA-Z]+\.\d+)\s*([^\.\d])'
     regex_repalce: '\t\1 \2'
   - loaded: true
-    name: default_level
-    regex_search: '^([^第\s\d一二三四五六七八九十])'
+    name: default_level #移除默认书签前面的空格
+    regex_search: '^\s*([^第\s\d一二三四五六七八九十])'
     regex_repalce: '\t\1'
   type: bookmark_level
-- rule: #书签样式格式化,额,在划分书签层级的时候已经把样式一起格式化了
+- rule: #书签样式格式化,额,在划分书签层级的时候已经把样式一起格式化了，理论与实际还是有出入的
   - loaded: 
     name: 
     regex_search: 
@@ -53,14 +68,30 @@ rules:
 - rule: #页偏移，是变量，就不引入yaml配置
   - loaded: true
     name: page_number
-    regex_search: '(\s*[\.·…•]*)*(\d+)\s*$'
-    regex_repalce: '\t\2'
+    regex_search: '(?:\s*[\.·…•⋯-]*)*(\d+)\s*$' #页偏移新增中文点
+    regex_repalce: '\t\1'
   type: page_offset
 - rule: #杂项
   - loaded: true  #是否启用该规则
     name: del_empty_lines  #规则名字，这里指删除空行的规则
     regex_search: '^$\r?\n'  #正则表达式，用于匹配空行
     regex_repalce: ''  #用于删除空行
+  - loaded: true
+    name: format_part
+    regex_search: '^\s*(第[\d一二三四五六七八九十]+?(?:篇|部分|编))\s*'
+    regex_repalce: '\1 '
+  - loaded: true
+    name: remove_redundant_space
+    regex_search: '(?: {2,}|　{1,})'
+    regex_repalce: ' '
+  - loaded: true
+    name: references
+    regex_search: '^\s*(参考文献|附录|索引)'
+    regex_repalce: '\1'
+  - loaded: true
+    name: chinese_third_level
+    regex_search: ^\s*([一二三四五六七八九十])
+    regex_repalce: '\t\t\1'
   type: misc
 - rule: #自定义规则
   - loaded: 
