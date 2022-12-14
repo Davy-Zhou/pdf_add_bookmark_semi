@@ -2,7 +2,7 @@
 
 # 半自动化给PDF加书签-Python实现-可双击执行-上篇
 
-![PDF直接加书签](https://s6.jpg.cm/2022/08/19/P6fFXi.gif)
+![PDF直接加书签](https://s2.loli.net/2022/12/14/ZQipAXE7gWyhbu2.gif)
 
 **下载链接**：https://github.com/Davy-Zhou/pdf_add_bookmark_semi/releases/download/v0.60/pdf_add_bookmark_semi.v0.60.zip
 
